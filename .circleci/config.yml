@@ -28,10 +28,14 @@ jobs:
           name: Decrypt Hub key
           command: |
             echo 'Decrypting Hub Key'
+            #- mkdir keys
+            #- echo $HUB_SERVER_KEY_HEX | xxd -r -ps >> keys/hub.key
             openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+            #- openssl rsa -in keys/hub.key -check -noout
       - run:
           name: Authorise Org
           command: |
+            echo assets/server.key
             echo 'Authorising your org'
             sfdx force:auth:jwt:grant -i $PROD_CONSUMER_KEY -f assets/server.key -u $PROD_USERNAME -d -a HubOrg
       - run:
