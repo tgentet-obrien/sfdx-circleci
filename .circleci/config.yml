@@ -28,7 +28,7 @@ jobs:
           name: Decrypt Hub key
           command: |
             echo 'Decrypting Hub Key'
-            openssl aes-256-cbc -d -md md5 -in assets/server.key.enc -out assets/server.key -k $SERVER_KEY_PASSWORD
+            openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
       - run:
           name: Authorise Org
           command: |
