@@ -42,6 +42,7 @@ jobs:
             sfdx force:org:display -u ciorg
       - run:
           name: Deploy Metadata
+          command: |
             echo 'make deploy key'
             sfdx force:auth:jwt:grant --clientid $DEPLOY_CONSUMER_KEY --jwtkeyfile keys/deploy.key --username $DEPLOY_SFDC_USER -a deploy
       - run:
