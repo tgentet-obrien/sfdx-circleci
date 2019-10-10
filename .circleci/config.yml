@@ -38,7 +38,7 @@ jobs:
             #- openssl rsa -in keys/hub.key -check -noout
             ### Uncomment the following if performing deployments
             echo 'make deploy key'
-            echo $DEPLOY_SERVER_KEY_HEX | xxd -r -ps >> keys/server.key
+            echo $DEPLOY_SERVER_KEY_HEX | xxd -r -ps >> assets/server.key
             openssl rsa -in assets/server.key -check -noout
             sfdx force:auth:jwt:grant --clientid $DEPLOY_CONSUMER_KEY --jwtkeyfile keys/deploy.key --username $DEPLOY_SFDC_USER -a deploy
       - run:
