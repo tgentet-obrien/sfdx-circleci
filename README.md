@@ -1,5 +1,5 @@
 # sfdx-circleci 
-[![CircleCI](https://circleci.com/gh/forcedotcom/sfdx-circleci.svg?style=svg)](https://circleci.com/gh/forcedotcom/sfdx-circleci)
+[![CircleCI](https://circleci.com/gh/tgentet-obrien/sfdx-circleci.svg?style=svg)](https://circleci.com/gh/tgentet-obrien/sfdx-circleci)
 
 Coming Soon --- For a fully guided walk through of setting up and configuring this sample, see the [Continuous Integration Using Salesforce DX](https://trailhead.salesforce.com/modules/sfdx_travis_ci) Trailhead module.
 
