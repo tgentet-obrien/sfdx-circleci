@@ -1,7 +1,11 @@
 version: 2
 
-# general:
+general:
+# Uncomment the following to specify only a specific branch
 #   branches:
+#     only:
+#       - dev # specific branch
+#       - /dev-.*/ # or regexes
 
 jobs:
   build:
@@ -25,31 +29,26 @@ jobs:
             sfdx
             mkdir tmp
       - run:
-          name: Decrypt Hub key
+          name: Create hub key
           command: |
-            echo 'Decrypting Hub Key'
+            echo 'make hub key'
             #- mkdir keys
             #- echo $HUB_SERVER_KEY_HEX | xxd -r -ps >> keys/hub.key
             openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
             #- openssl rsa -in keys/hub.key -check -noout
-            cat assets/server.key
+          ### Uncomment the following if performing deployments
+          #- echo 'make deploy key'
+          #- echo $DEPLOY_SERVER_KEY_HEX | xxd -r -ps >> keys/deploy.key
+          #- openssl rsa -in keys/deploy.key -check -noout
+          #- sfdx force:auth:jwt:grant --clientid $DEPLOY_CONSUMER_KEY --jwtkeyfile keys/deploy.key --username $DEPLOY_SFDC_USER -a deploy
       - run:
-          name: Authorise Org
+          name: Setup Org
           command: |
-            cat assets/server.key
-            echo 'Authorising your org'
-            sfdx force:auth:jwt:grant -i $PROD_CONSUMER_KEY -f assets/server.key -u $PROD_USERNAME -d -a HubOrg
-      - run:
-          name: Create Scratch Org
-          command: |
-            echo 'Creating a Scratch Org'
-            sfdx force:org:create -v HubOrg -s -f config/project-scratch-def.json -a ciorg -w 10 -d 1
-            sfdx force:org:display -u ciorg
-      - run:
-          name: Deploy Metadata
-          command: |
-            echo 'make deploy key'
-            sfdx force:auth:jwt:grant --clientid $DEPLOY_CONSUMER_KEY --jwtkeyfile keys/deploy.key --username $DEPLOY_SFDC_USER -a deploy
+            echo 'Running tests'
+            sfdx force:auth:jwt:grant --clientid $HUB_CONSUMER_KEY --jwtkeyfile assets/server.key --username $HUB_SFDC_USER --setdefaultdevhubusername -a hub
+            sfdx force --help
+            sfdx force:org:create -s -f ~/ci_app/config/project-scratch-def.json -a circle_build_$CIRCLE_BUILD_NUM --wait 2
+            sfdx force:source:push -u circle_build_$CIRCLE_BUILD_NUM
       - run:
           name: Run Apex Tests
           command: |
@@ -61,6 +60,7 @@ jobs:
           name: Delete Useless Scratch Org
           command: |
             sfdx force:org:delete -u circle_build_$CIRCLE_BUILD_NUM -p
+
 ### Uncomment the following if performing deployments
 #deployment:
 #  override:
