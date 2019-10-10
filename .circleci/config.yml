@@ -33,12 +33,12 @@ jobs:
           command: |
             echo 'make hub key'
             #- mkdir keys
-            #- echo $HUB_SERVER_KEY_HEX | xxd -r -ps >> keys/hub.key
+            #- echo $HUB_SERVER_KEY_HEX | xxd -r -ps >> assets/server.key
             openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out assets/server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
             #- openssl rsa -in keys/hub.key -check -noout
             ### Uncomment the following if performing deployments
             echo 'make deploy key'
-            echo $DEPLOY_SERVER_KEY_HEX | xxd -r -ps >> keys/deploy.key
+            echo $DEPLOY_SERVER_KEY_HEX | xxd -r -ps >> keys/server.key
             openssl rsa -in assets/server.key -check -noout
             sfdx force:auth:jwt:grant --clientid $DEPLOY_CONSUMER_KEY --jwtkeyfile keys/deploy.key --username $DEPLOY_SFDC_USER -a deploy
       - run:
